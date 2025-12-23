@@ -1,8 +1,12 @@
 import 'dotenv/config';
+
+// Node deps
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { Client, Collection, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
+
+// Discord.js
+import { Client, Collection, GatewayIntentBits } from 'discord.js';
 
 const TOKEN = process.env.BOT_TOKEN;
 const client = new Client({
@@ -11,11 +15,8 @@ const client = new Client({
     ],
 });
 
-client.once(Events.ClientReady, (readyClient) => {
-    console.log(`Ready and logged in as ${readyClient.user.tag} :)`);
-});
-
 client.commands = new Collection();
+client.cooldowns = new Collection();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,31 +40,18 @@ for (const folder of commandFolders) {
     }
 }
 
-client.on(Events.InteractionCreate, async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
-    const command = interaction.client.commands.get(interaction.commandName);
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith('.ts'));
 
-    if (!command) {
-        console.error(`No command matching ${interaction.commandName} was found.`);
-        return;
-    }
+for (const file of eventFiles) {
+    const filePath = path.join(eventsPath, file);
+    const { event } = import(filePath);
 
-    try {
-        await command.execute(interaction);
-    } catch (error) {
-        console.error(error);
-        if (interaction.replied || interaction.deferred) {
-            await interaction.followUp({
-                content: 'There was an error while executing this command!',
-                flags: MessageFlags.Ephemeral,
-            });
-        } else {
-            await interaction.reply({
-                content: 'There was an error while executing this command!',
-                flags: MessageFlags.Ephemeral,
-            });
-        }
+    if (event.once) {
+        client.once(event.name, (...args) => event.execute(...args));
+    } else {
+        client.on(event.name, (...args) => event.execute(...args));
     }
-});
+}
 
 client.login(TOKEN);

@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js';
 
 const command = {
+    cooldown: 5,
     data: new SlashCommandBuilder()
         .setName('ping')
         .setDescription('Replies with Pong!'),
