@@ -1,26 +1,18 @@
 {
     "compilerOptions": {
-        "target": "ES2024",
-        "module": "NodeNext",
+        "target": "ES2022",
+        "module": "ES2022",
+        "moduleResolution": "node",
         "outDir": "./dist",
-        "rootDir": "./",
+        "rootDir": "./src",
         "strict": true,
-        "allowSyntheticDefaultImports": true,
-        "allowJs": true,
         "esModuleInterop": true,
-        "declaration": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "moduleResolution": "nodenext",
-        "baseUrl": ".",
-        "paths": {
-            "@app/*": [
-                "./app/*"
-            ]
-        }
+        "resolveJsonModule": true,
     },
     "include": [
-        "app/**/*.ts"
+        "src/**/*"
     ],
     "exclude": [
         "node_modules",
