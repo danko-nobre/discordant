@@ -28,17 +28,15 @@ for (const folder of commandFolders) {
 
 const rest = new REST().setToken(config.discord.token);
 
-(async () => {
-    try {
-        console.log(`Iniciando atualização de ${commands.length} comandos slash.`);
+try {
+    console.log(`Iniciando atualização de ${commands.length} comandos slash.`);
 
-        const data: any = await rest.put(
-            Routes.applicationGuildCommands(config.discord.clientId, config.discord.guildId),
-            { body: commands },
-        );
+    const data = await rest.put(
+        Routes.applicationGuildCommands(config.discord.clientId, config.discord.guildId),
+        { body: commands },
+    ) as Array<unknown>;
 
-        console.log(`Sucesso! ${data.length} comandos registrados.`);
-    } catch (error) {
-        console.error(error);
-    }
-})();
+    console.log(`Sucesso! ${data.length} comandos registrados.`);
+} catch (error) {
+    console.error(error);
+}
