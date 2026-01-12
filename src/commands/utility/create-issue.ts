@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, type ChatInputCommandInteraction, PermissionFlagsBits } from "discord.js";
 import { config } from '../../config.js';
-import { createIssue } from '../../lib/github.js';
+import { createIssue, addIssueToProject } from '../../lib/github.js';
 
 const command = {
     data: new SlashCommandBuilder()
@@ -64,6 +64,16 @@ const command = {
                 body,
                 ['triagem', 'discord']
             );
+
+            // Adiciona ao projeto se configurado
+            if (config.github.projectId) {
+                try {
+                    await addIssueToProject(issue.node_id, config.github.projectId);
+                    console.log(`Issue adicionada ao projeto: ${issue.title}`);
+                } catch (err) {
+                    console.error('Erro ao adicionar issue ao projeto:', err);
+                }
+            }
 
             await interaction.editReply({
                 content: `✅ Issue criada com sucesso: ${issue.html_url}`

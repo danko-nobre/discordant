@@ -11,6 +11,7 @@ export const config = {
     },
     github: {
         token: process.env.GITHUB_TOKEN!,
+        projectId: process.env.GITHUB_PROJECT_ID,
         publicRepo: {
             owner: process.env.PUBLIC_REPO_OWNER!,
             repo: process.env.PUBLIC_REPO_NAME!,
